@@ -11,6 +11,16 @@ const RollDice = () => {
     "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Dice-6-b.svg/512px-Dice-6-b.png", // Dice 6
   ];
 
+  const diceMessages = [
+    "You rolled a 1! Try again for a better roll.",
+    "You rolled a 2! Not bad, keep going!",
+    "You rolled a 3! Halfway there!",
+    "You rolled a 4! Nice roll!",
+    "You rolled a 5! Great roll!",
+    "You rolled a 6! 🎉 Congratulations!",
+  ];
+
+
   const [currentDice, setCurrentDice] = useState(0);
 
   const rollTheDice = () => {
@@ -25,6 +35,13 @@ const RollDice = () => {
         style={styles.diceImage}
         source={{ uri: diceImages[currentDice] }}
       />
+
+      <View>
+        <Text style={styles.message}> 
+          {diceMessages[currentDice]}
+        </Text>
+      </View>
+     
       <Pressable style={styles.button} onPress={rollTheDice}>
         <Text style={styles.buttonText}>Press to Roll Dice</Text>
       </Pressable>
@@ -41,6 +58,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F4F4F4',
     padding: 20,
+  },
+  message: {
+    fontSize: 18,
+    color: '#555',
+    fontWeight: 'bold',
+    marginVertical: 10,
+    textAlign: 'center',
   },
   title: {
     fontSize: 24,
