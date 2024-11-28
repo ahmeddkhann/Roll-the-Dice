@@ -1,5 +1,13 @@
-import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
-import React, { useState } from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  Easing,
+  Image,
+} from 'react-native';
+import React, { useState, useRef } from 'react';
 
 const RollDice = () => {
   const diceImages = [
@@ -20,28 +28,37 @@ const RollDice = () => {
     "You rolled a 6! 🎉 Congratulations!",
   ];
 
-
   const [currentDice, setCurrentDice] = useState(0);
+  const spinValue = useRef(new Animated.Value(0)).current;
 
   const rollTheDice = () => {
-    const generateNumber = Math.floor(Math.random() * 6);
-    setCurrentDice(generateNumber);
+  
+    Animated.timing(spinValue, {
+      toValue: 1,
+      duration: 700, 
+      easing: Easing.linear,
+      useNativeDriver: true,
+    }).start(() => {
+      spinValue.setValue(0);
+
+      const generateNumber = Math.floor(Math.random() * 6);
+      setCurrentDice(generateNumber);
+    });
   };
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>🎲 Roll The Dice 🎲</Text>
-      <Image
-        style={styles.diceImage}
+      <Animated.Image
+        style={[styles.diceImage, { transform: [{ rotate: spin }] }]}
         source={{ uri: diceImages[currentDice] }}
       />
-
-      <View>
-        <Text style={styles.message}> 
-          {diceMessages[currentDice]}
-        </Text>
-      </View>
-     
+      <Text style={styles.message}>{diceMessages[currentDice]}</Text>
       <Pressable style={styles.button} onPress={rollTheDice}>
         <Text style={styles.buttonText}>Press to Roll Dice</Text>
       </Pressable>
@@ -54,35 +71,35 @@ export default RollDice;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F4F4F4',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F4F4F4",
     padding: 20,
-  },
-  message: {
-    fontSize: 18,
-    color: '#555',
-    fontWeight: 'bold',
-    marginVertical: 10,
-    textAlign: 'center',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#333',
+    color: "#333",
   },
   diceImage: {
     width: 150,
     height: 150,
     marginVertical: 20,
   },
+  message: {
+    fontSize: 18,
+    color: "#555",
+    fontWeight: "bold",
+    marginVertical: 10,
+    textAlign: "center",
+  },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
@@ -90,7 +107,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
 });
